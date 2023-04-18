@@ -4,7 +4,7 @@ const test = require('tape')
 const tiny = require('tiny-json-http')
 const sizeOf = require('image-size')
 const path = require('path')
-const mochDir = path.join(__dirname, '/', 'image-plugin-example')
+const mochDir = path.join(__dirname, 'image-plugin-example')
 const baseUrl = 'http://localhost:3333'
 // async function sizeOf (buf) {
 //   return new Promise(function (resolve, reject) {

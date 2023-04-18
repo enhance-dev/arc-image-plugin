@@ -2,7 +2,7 @@
   "name": "@enhance/arc-image-plugin",
   "version": "0.0.4",
   "description": "Enhance/Architect plugin for transforming images",
-  "main": "src/index.js",
+  "main": "src/plugins/arc-image-plugin/index.js",
   "scripts": {
     "lint": "eslint . --fix",
     "hydrate:tests": "cd test/image-plugin-example && npm i",
@@ -17,6 +17,7 @@
   "devDependencies": {
     "@architect/architect": "^10.8.0",
     "@architect/eslint-config": "^2.0.0",
+    "@enhance/arc-plugin-enhance": "^5.0.1",
     "eslint": "^7.11.0",
     "gm": "^1.23.1",
     "image-size": "^1.0.0",
@@ -26,8 +27,8 @@
     "tiny-json-http": "^7.3.1"
   },
   "files": [
-    "src/index.js",
-    "src/image-handler/index.js"
+    "src/plugins/arc-image-plugin/index.js",
+    "src/plugins/arc-image-plugin/image-handler/index.js"
   ],
   "eslintConfig": {
     "extends": "@architect/eslint-config"
