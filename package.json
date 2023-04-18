@@ -1,6 +1,6 @@
 {
   "name": "@enhance/arc-image-plugin",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Enhance/Architect plugin for transforming images",
   "main": "src/plugins/arc-image-plugin/index.js",
   "scripts": {
