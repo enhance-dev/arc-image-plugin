@@ -11,7 +11,7 @@ enhance/arc-plugin-enhance
 
 @aws
 profile begin-examples
-runtime nodejs16.x
+runtime nodejs18.x
 
 
 @begin

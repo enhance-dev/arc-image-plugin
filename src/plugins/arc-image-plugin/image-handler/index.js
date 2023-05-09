@@ -1,3 +1,4 @@
+const parse = require('./parse.js')
 const path = require('path')
 const fs = require('fs')
 const arc = require('@architect/functions')
@@ -55,21 +56,21 @@ module.exports = {
     cacheBucket = isLive ? staticDir : process.env.ARC_IMAGE_PLUGIN_LOCAL_CACHE
 
     // Validate request parameters
-    let rawPath = req.rawPath
-    let imagePath = rawPath.replace(/_static\//i, '').replace(/_public\//i, '').replace(/^\/transform\//i, '')
-    let query = req.queryStringParameters
+    let { srcPath, parameterGroups } = parse(req.pathParameters.proxy)
+    let imagePath = srcPath.replace(/_static\//i, '').replace(/_public\//i, '')
+    if (!imagePath) return fourOhFour
+    let params = parameterGroups[0]
 
     let allowedParams = {
-      width: query?.width, // in pixels
-      height: query?.height,  // in pixels
-      quality: query?.quality, // 0 to 100
-      format: query?.format, // output file format
-      fit: query?.fit, // cover or contain
-      focus: query?.focus, // top, right, bottom, left, top-right, bottom-right, bottom-left, top-left
-      mark: query?.mark !== undefined ? true : false,
-      x: query?.x,
-      y: query?.y,
-
+      width: params?.width, // in pixels
+      height: params?.height,  // in pixels
+      quality: params?.quality, // 0 to 100
+      format: params?.format, // output file format
+      fit: params?.fit, // cover or contain
+      focus: params?.focus, // top, right, bottom, left, top-right, bottom-right, bottom-left, top-left
+      mark: params?.mark !== undefined ? true : false,
+      x: params?.x,
+      y: params?.y,
     }
 
     const imageFormats = {
@@ -85,7 +86,7 @@ module.exports = {
     hash.update(`${imagePath}:${normalizedStringify(allowedParams)}`)
     let queryFingerprint =  hash.digest('hex').slice(0, 10)
     let ext = path.extname(imagePath).slice(1)
-    let extOut = imageFormats?.[allowedParams.format]?.extOut || imageFormats[ext].extOut
+    let extOut = imageFormats?.[allowedParams?.format]?.extOut || imageFormats[ext].extOut
     if (!extOut) return fourOhFour
     let mime = imageFormats[extOut].mime
 
