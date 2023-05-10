@@ -24,12 +24,14 @@ The Architect framework serves static assets from a local folder that becomes an
 You drop your `giant.jpeg` image in the `public` folder, and then once deployed, you can access it from anywhere.
 In your app you can request `http://example.com/_static/giant.jpeg` or with a root relative path at `/_public/giant.jpeg`. 
 
-With the image plugin, you can request the same image by swapping the “_static” for “transform” and include query parameters to get a different size (`/transform/giant.jpeg?width=100&height=100`). 
+With the image plugin, you can request the same image by swapping the “_static” for “transform” and include query parameters to get a different size (`/transform/width_100,height_100/giant.jpeg`). 
 This will scale the image to fit in those dimensions while maintaining the aspect ratio. 
 
 Other examples:
 - /transform/_public/elephant.jpg?format=avif&width=100&quality=50
 - /transform/_public/elephant.png?format=webp&width=100&height=500
+- /transform/format_avif,width_100,quality_50/_public/elephant.jpg
+- /transform/format_webp,width_100,height_500/_public/elephant.png
 
 ## Supported formats
 - png
