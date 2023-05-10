@@ -1,4 +1,3 @@
-const parse = require('./parse.js')
 const path = require('path')
 const fs = require('fs')
 const arc = require('@architect/functions')
@@ -56,7 +55,7 @@ module.exports = {
     cacheBucket = isLive ? staticDir : process.env.ARC_IMAGE_PLUGIN_LOCAL_CACHE
 
     // Validate request parameters
-    let { srcPath, parameterGroups } = parse(req.pathParameters.proxy)
+    let { srcPath, parameterGroups } = parseUrl(req.pathParameters.proxy)
     let imagePath = srcPath.replace(/_static\//i, '').replace(/_public\//i, '')
     if (!imagePath) return fourOhFour
     let params = parameterGroups[0]
@@ -297,7 +296,56 @@ module.exports = {
       return fourOhFour
     }
 
-  }
+  },
+
+  parseUrl
 
 }
 
+function parseUrl (urlPart) {
+  const parts = urlPart.split('/').filter(Boolean)
+  let paramGroups = []
+  let currentGroup = {}
+  let srcPath = ''
+
+  for (const part of parts) {
+    if (part === 'source') {
+      srcPath = parts.slice(parts.indexOf(part) + 1).join('/')
+      break
+    }
+    else if (part.startsWith('_public')) {
+      srcPath = parts.slice(parts.indexOf(part)).join('/')
+      break
+    }
+    else {
+      if (part.includes(',')) {
+        const params = part.split(',')
+        for (const param of params) {
+          if (param.includes('_')) {
+            const [ key, value ] = param.split('_')
+            currentGroup[key] = value
+          }
+          else {
+            currentGroup[param] = true
+          }
+        }
+      }
+      else {
+        if (part.includes('_')) {
+          const [ key, value ] = part.split('_')
+          currentGroup[key] = value
+        }
+        else {
+          currentGroup[part] = true
+        }
+      }
+      paramGroups.push(currentGroup)
+      currentGroup = {}
+    }
+  }
+
+  return {
+    parameterGroups: paramGroups,
+    srcPath: srcPath
+  }
+}
