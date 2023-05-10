@@ -28,8 +28,6 @@ With the image plugin, you can request the same image by swapping the “_static
 This will scale the image to fit in those dimensions while maintaining the aspect ratio. 
 
 Other examples:
-- /transform/_public/elephant.jpg?format=avif&width=100&quality=50
-- /transform/_public/elephant.png?format=webp&width=100&height=500
 - /transform/format_avif,width_100,quality_50/_public/elephant.jpg
 - /transform/format_webp,width_100,height_500/_public/elephant.png
 
