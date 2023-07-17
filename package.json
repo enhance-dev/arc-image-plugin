@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint . --fix",
     "hydrate:tests": "cd test/image-plugin-example && npm i",
-    "test": "tape 'test/*-test.js'  | tap-arc --verbose"
+    "test": "echo \"Tests temporarily disabled during alpha development\" && exit 1"
   },
   "author": "Ryan Bethel",
   "dependencies": {
