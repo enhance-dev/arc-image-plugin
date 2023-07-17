@@ -1,5 +1,5 @@
 function getConfig ({ arc }) {
-  const config = arc['arc-image-plugin'].reduce((config, option) => {
+  const config = arc['enhance-image'].reduce((config, option) => {
     if (option['widths']) {
       config.widths = option.widths
     }
