@@ -29,7 +29,8 @@
   "files": [
     "src/plugins/arc-image-plugin/index.js",
     "src/plugins/arc-image-plugin/image-handler/index.js",
-    "src/plugins/arc-image-plugin/format-path.js"
+    "src/plugins/arc-image-plugin/format-path.js",
+    "src/plugins/arc-image-plugin/get-config.js"
   ],
   "eslintConfig": {
     "extends": "@architect/eslint-config"
