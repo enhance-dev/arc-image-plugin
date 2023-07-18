@@ -1,15 +1,17 @@
 function getConfig ({ arc }) {
-  const config = arc['enhance-image'].reduce((config, option) => {
+  const pluginConfig = arc['enhance-image'] || []
+
+  const config = pluginConfig.reduce((result, option) => {
     if (option['widths']) {
-      config.widths = option.widths
+      result.widths = option.widths
     }
 
     if (Array.isArray(option)) {
       const [ key, value ] = option
-      config[key] = value
+      result[key] = value
     }
 
-    return config
+    return result
   }, {})
 
   const {
