@@ -16,7 +16,7 @@ module.exports = {
       const imagePaths = getImagePaths({ arc, inventory })
 
       // Mmm, let's generate those images
-      // TODO: sandbox.start will run every time the project files change — don't regenerate if `imagePaths` hasn't changed!
+      // TODO: sandbox.start will run every time the project files change — safe to rerun this every time…?
       console.log({ imagePaths })
     }
   },

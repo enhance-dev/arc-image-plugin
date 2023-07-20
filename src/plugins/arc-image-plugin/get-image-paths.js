@@ -52,7 +52,7 @@ function getImages ({ directory, cwd }) {
 function getImagePaths ({ arc, inventory }) {
   const { cwd } = inventory.inv._project
   const { widths, format, quality, directory } = getConfig({ arc })
-  const imageDir = path.join(cwd, directory.split(path.sep))
+  const imageDir = path.join(cwd, directory.split(path.sep)) // accounts for *nix and Windows path separators
   const imageFiles = getImages({ directory: imageDir, cwd })
 
   let imagePaths = []
