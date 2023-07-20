@@ -18,12 +18,14 @@ function getConfig ({ arc }) {
     widths = [ 2400, 1200, 800 ],
     format = 'webp',
     quality = 80,
+    directory = 'public/images'
   } = config
 
   return {
     widths,
     format,
-    quality
+    quality,
+    directory,
   }
 }
 

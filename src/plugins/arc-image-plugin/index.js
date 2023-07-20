@@ -3,24 +3,31 @@ const os = require('os')
 const fs = require('fs')
 
 const formatPath = require('./format-path.js')
-const getConfig = require('./get-config.js')
+const getImagePaths = require('./get-image-paths.js')
+const writeConfig = require('./write-config.js')
 
 module.exports = {
   formatPath,
-  hydrate: {
-    copy: async function ({ arc, inventory, copy }) {
-      const config = getConfig({ arc })
-      const configFile = `export default ${JSON.stringify(config)}`
-      const { cwd } = inventory.inv._project
-      const outputDir = path.join(cwd, '.enhance')
-      fs.mkdirSync(outputDir, { recursive: true })
-      const filePath = path.join(outputDir, 'image-config.mjs')
-      fs.writeFileSync(filePath, configFile)
-      await copy({
-        // Source can't be `filePath` b/c bug in hydrate
-        source: '.enhance/image-config.mjs',
-        target: `@architect/shared/enhance-image/image-config.mjs`,
-      })
+  sandbox: {
+    start: function ({ arc, inventory }) {
+      // Should this be conditionally run only if `.arc[enhance-image]` has changed…?
+      writeConfig({ arc, inventory })
+
+      const imagePaths = getImagePaths({ arc, inventory })
+
+      // Mmm, let's generate those images
+      // TODO: sandbox.start will run every time the project files change — don't regenerate if `imagePaths` hasn't changed!
+      console.log({ imagePaths })
+    }
+  },
+  deploy: {
+    start: function ({ arc, inventory }) {
+      writeConfig({ arc, inventory })
+
+      const imagePaths = getImagePaths({ arc, inventory })
+
+      // Mmm, let's generate those images
+      console.log({ imagePaths })
     }
   },
   set: {

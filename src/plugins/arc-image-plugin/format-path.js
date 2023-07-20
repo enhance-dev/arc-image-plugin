@@ -1,3 +1,11 @@
+/**
+ * @param {object} config
+ * @param {string} config.src - The path to the source image in the project
+ * @param {number} config.width - The desired width for the transformed image
+ * @param {number} config.quality - The desired quality setting for the transformed image
+ * @param {('webp'|'avif'|'jpeg'|'png')} config.format - The desired format for the transformed image
+ * @returns {string} The path for the generated image
+ */
 function formatPath ({
   src,
   width,
