@@ -1,25 +1,25 @@
-function getConfig ({ arc }) {
-  const pluginConfig = arc['enhance-image'] || []
+const fs = require('fs')
+const path = require('path')
 
-  const config = pluginConfig.reduce((result, option) => {
-    if (option['widths']) {
-      result.widths = option.widths
-    }
+function getConfig ({ inventory }) {
+  const { cwd } = inventory.inv._project
 
-    if (Array.isArray(option)) {
-      const [ key, value ] = option
-      result[key] = value
-    }
+  const enhanceConfigPath = path.join(cwd, 'enhance.json')
+  const enhanceConfigExists = fs.existsSync(enhanceConfigPath)
 
-    return result
-  }, {})
+  let options = {}
+  if (enhanceConfigExists) {
+    const contents = fs.readFileSync(enhanceConfigPath)
+    const { '@enhance/image': imageConfig } = JSON.parse(contents)
+    options = imageConfig
+  }
 
   const {
     widths = [ 2400, 1200, 800 ],
     format = 'webp',
     quality = 80,
     directory = 'public/images'
-  } = config
+  } = options
 
   return {
     widths,

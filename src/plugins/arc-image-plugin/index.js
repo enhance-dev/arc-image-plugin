@@ -4,15 +4,11 @@ const fs = require('fs')
 
 const formatPath = require('./format-path.js')
 const getImagePaths = require('./get-image-paths.js')
-const writeConfig = require('./write-config.js')
 
 module.exports = {
   formatPath,
   sandbox: {
     start: function ({ arc, inventory }) {
-      // Should this be conditionally run only if `.arc[enhance-image]` has changed…?
-      writeConfig({ arc, inventory })
-
       const imagePaths = getImagePaths({ arc, inventory })
 
       // Mmm, let's generate those images
@@ -22,8 +18,6 @@ module.exports = {
   },
   deploy: {
     start: function ({ arc, inventory }) {
-      writeConfig({ arc, inventory })
-
       const imagePaths = getImagePaths({ arc, inventory })
 
       // Mmm, let's generate those images
