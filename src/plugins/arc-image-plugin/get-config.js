@@ -22,7 +22,8 @@ function getConfig ({ arc, inventory }) {
   // Read config from enhance.json if it exists
   else if (enhanceConfigExists) {
     const contents = fs.readFileSync(enhanceConfigPath)
-    const { '@enhance/image': imageConfig } = JSON.parse(contents)
+    const { plugins = {} } = JSON.parse(contents)
+    const { '@enhance/image': imageConfig } = plugins
     options = imageConfig
   }
 
