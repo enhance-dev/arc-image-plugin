@@ -1,6 +1,6 @@
 {
   "name": "@enhance/arc-image-plugin",
-  "version": "1.1.0",
+  "version": "2.0.0-RC.9",
   "description": "Enhance/Architect plugin for transforming images",
   "main": "src/plugins/arc-image-plugin/index.js",
   "scripts": {
@@ -15,7 +15,7 @@
     "wasm-vips": "^0.0.5"
   },
   "devDependencies": {
-    "@architect/architect": "^10.8.0",
+    "@architect/architect": "^10.13.2",
     "@architect/eslint-config": "^2.0.0",
     "@enhance/arc-plugin-enhance": "^5.0.1",
     "eslint": "^7.11.0",
@@ -28,7 +28,8 @@
   },
   "files": [
     "src/plugins/arc-image-plugin/index.js",
-    "src/plugins/arc-image-plugin/image-handler/index.js"
+    "src/plugins/arc-image-plugin/image-handler/index.js",
+    "src/plugins/arc-image-plugin/format-path.js"
   ],
   "eslintConfig": {
     "extends": "@architect/eslint-config"
