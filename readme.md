@@ -36,6 +36,7 @@ Other examples:
 - jpeg
 - avif
 - webp
+- jxl
 - gif
 
 ## Parameters
