@@ -86,6 +86,7 @@ module.exports = {
       png: { extOut: 'png', mime: 'image/png' },
       avif: { extOut: 'avif', mime: 'image/avif' },
       webp: { extOut: 'webp', mime: 'image/webp' },
+      jxl: { extOut: 'jxl', mime: 'image/jxl' },
     }
 
 
