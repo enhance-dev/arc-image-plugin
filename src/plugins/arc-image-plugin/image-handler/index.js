@@ -57,8 +57,6 @@ function imageResponse ({ mime, buffer, cachePath }){
 module.exports = {
   handler: async function (req){
 
-    const { S3 } = await getAws()
-
     discovered = await discovery
     cacheBucket = isLive ? staticDir : process.env.ARC_IMAGE_PLUGIN_LOCAL_CACHE
 
@@ -109,6 +107,7 @@ module.exports = {
       let Bucket = cacheBucket
       let Key = cachePath
       try {
+        const { S3 } = await getAws()
         const response = await S3.GetObject({ Bucket, Key })
         buffer = response.Body
       }
@@ -139,6 +138,7 @@ module.exports = {
       let Bucket = staticDir
       let Key = imagePath
       try {
+        const { S3 } = await getAws()
         const response = await S3.GetObject({ Bucket, Key })
         buffer = response.Body
       }
@@ -260,6 +260,7 @@ module.exports = {
       let output = image.writeToBuffer('.' + extOut, options)
 
       if (isLive) {
+        const { S3 } = await getAws()
         await S3.PutObject({
           ContentType: mime,
           Bucket: cacheBucket,
