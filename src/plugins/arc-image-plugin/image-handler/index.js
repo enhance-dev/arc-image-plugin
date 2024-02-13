@@ -258,6 +258,7 @@ module.exports = {
       let options = {}
       if (allowedParams.quality) options.Q = allowedParams.quality
       let output = image.writeToBuffer('.' + extOut, options)
+      const outputBuffer = Buffer.from(output)
 
       if (isLive) {
         const { S3 } = await getAws()
@@ -265,16 +266,16 @@ module.exports = {
           ContentType: mime,
           Bucket: cacheBucket,
           Key,
-          Body: output,
+          Body: outputBuffer,
         })
       }
       else {
         if (!fs.existsSync(`${cacheBucket}/${imageCacheFolderName}`)) fs.mkdirSync(`${cacheBucket}/${imageCacheFolderName}`)
-        fs.writeFileSync(path.resolve(cacheBucket, Key), output)
+        fs.writeFileSync(path.resolve(cacheBucket, Key), outputBuffer)
       }
 
       // 4. respond with the image
-      return imageResponse({ mime, buffer: Buffer.from(output), cachePath })
+      return imageResponse({ mime, buffer: outputBuffer, cachePath })
     }
     else {
       return fourOhFour
