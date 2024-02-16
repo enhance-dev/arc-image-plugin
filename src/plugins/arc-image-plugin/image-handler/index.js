@@ -1,31 +1,28 @@
-const path = require('path')
-const fs = require('fs')
+const Vips = require('wasm-vips')
 const arc = require('@architect/functions')
-const { createHash } = require('crypto')
+const awsLite = require('@aws-lite/client')
+const fs = require('fs')
 const normalizedStringify = require('json-stable-stringify')
+const path = require('path')
+const { createHash } = require('crypto')
+
 const env = process.env.ARC_ENV || process.env.NODE_ENV
 const isLive = (env === 'staging' || env === 'production')
-const Region = process.env.AWS_REGION
 const discovery = arc.services() // returns a promise, await in handler
 const fourOhFour = { statusCode: 404 }
 const staticDir = process.env.ARC_STATIC_BUCKET
 let discovered, cacheBucket
 const imageCacheFolderName = '.image-transform-cache'
 
-let isNode18 = Number(process.version.replace('v', '').split('.')[0]) >= 18
-let s3, S3Client, GetObjectCommand, PutObjectCommand
-if (isNode18) {
-  ({ S3Client, GetObjectCommand, PutObjectCommand } = require('@aws-sdk/client-s3'))
-  s3 = new S3Client({ region: Region })
+let aws
+
+async function getAws () {
+  if (!aws) aws = await awsLite({
+    region: process.env.AWS_REGION,
+    plugins: [ import('@aws-lite/s3') ]
+  })
+  return aws
 }
-else {
-  const AWS = require('aws-sdk')
-  s3 = new AWS.S3({ Region })
-}
-
-const Vips = require('wasm-vips')
-
-
 
 function antiCache ({ mime }) {
   return {
@@ -59,6 +56,7 @@ function imageResponse ({ mime, buffer, cachePath }){
 
 module.exports = {
   handler: async function (req){
+
     discovered = await discovery
     cacheBucket = isLive ? staticDir : process.env.ARC_IMAGE_PLUGIN_LOCAL_CACHE
 
@@ -109,15 +107,9 @@ module.exports = {
       let Bucket = cacheBucket
       let Key = cachePath
       try {
-        if (isNode18) {
-          const command = new GetObjectCommand({ Bucket, Key })
-          const response = await s3.send(command)
-          buffer = await response.Body.transformToByteArray()
-        }
-        else {
-          const result = await s3.getObject({ Bucket, Key }).promise()
-          buffer = result.Body
-        }
+        const { S3 } = await getAws()
+        const response = await S3.GetObject({ Bucket, Key })
+        buffer = response.Body
       }
       catch (e){
         exists = false
@@ -146,15 +138,9 @@ module.exports = {
       let Bucket = staticDir
       let Key = imagePath
       try {
-        if (isNode18) {
-          const command = new GetObjectCommand({ Bucket, Key })
-          const response = await s3.send(command)
-          buffer = await response.Body.transformToByteArray()
-        }
-        else {
-          const result = await s3.getObject({ Bucket, Key }).promise()
-          buffer = result.Body
-        }
+        const { S3 } = await getAws()
+        const response = await S3.GetObject({ Bucket, Key })
+        buffer = response.Body
       }
       catch (e) {
         exists = false
@@ -192,12 +178,8 @@ module.exports = {
       const heightOut = allowedParams.height ? Number.parseInt(allowedParams.height) : 0
       const widthOut = allowedParams.width ? Number.parseInt(allowedParams.width) : 0
 
-      const aspectIn = widthIn / heightIn
-      const aspectOut = (heightOut && widthOut) ? widthOut / heightOut : aspectIn
-
       const heightScale = heightOut ? heightOut / heightIn : widthOut / widthIn
       const widthScale = widthOut ? widthOut / widthIn : heightOut / heightIn
-
 
       const xPercent = allowedParams.x ? Number.parseInt(allowedParams.x) : 50
       const yPercent = allowedParams.y ? Number.parseInt(allowedParams.y) : 50
@@ -273,37 +255,27 @@ module.exports = {
 
       }
 
-
       let options = {}
       if (allowedParams.quality) options.Q = allowedParams.quality
       let output = image.writeToBuffer('.' + extOut, options)
+      const outputBuffer = Buffer.from(output)
 
       if (isLive) {
-        if (isNode18) {
-          const command = new PutObjectCommand({
-            ContentType: mime,
-            Bucket: cacheBucket,
-            Key,
-            Body: output,
-          })
-          await s3.send(command)
-        }
-        else {
-          await s3.putObject({
-            ContentType: mime,
-            Bucket: cacheBucket,
-            Key,
-            Body: output,
-          }).promise()
-        }
+        const { S3 } = await getAws()
+        await S3.PutObject({
+          ContentType: mime,
+          Bucket: cacheBucket,
+          Key,
+          Body: outputBuffer,
+        })
       }
       else {
         if (!fs.existsSync(`${cacheBucket}/${imageCacheFolderName}`)) fs.mkdirSync(`${cacheBucket}/${imageCacheFolderName}`)
-        fs.writeFileSync(path.resolve(cacheBucket, Key), output)
+        fs.writeFileSync(path.resolve(cacheBucket, Key), outputBuffer)
       }
 
       // 4. respond with the image
-      return imageResponse({ mime, buffer: Buffer.from(output), cachePath })
+      return imageResponse({ mime, buffer: outputBuffer, cachePath })
     }
     else {
       return fourOhFour
