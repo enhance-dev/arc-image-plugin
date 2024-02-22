@@ -11,7 +11,7 @@
   "author": "Ryan Bethel",
   "dependencies": {
     "@architect/functions": "^8.0.3",
-    "@aws-lite/client": "^0.17.2",
+    "@aws-lite/client": "^0.17.3",
     "@aws-lite/s3": "^0.1.18",
     "json-stable-stringify": "^1.0.1",
     "wasm-vips": "^0.0.5"
