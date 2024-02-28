@@ -9,7 +9,7 @@ module.exports = {
       return { ignore: [ '.image-transform-cache' ] }
     },
     http: function () {
-      return { method: 'get', path: '/transform/*', src: path.join(__dirname,'image-handler'), config: { timeout: 30 } }
+      return { method: 'get', path: '/transform/*', src: path.join(__dirname, 'image-handler'), config: { timeout: 30, memory: 2048 } }
     },
     env: function ({ arc }) {
       const localCacheBucket = fs.mkdtempSync(path.join(os.tmpdir(), 'arc-image-cache'))
